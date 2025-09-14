@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Champion·ne départemental·e</title>
+  <style>
+    :root{--bg:#0f172a;--accent:#ffd700}
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial}
+    body{display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 20% 20%, rgba(255,215,0,0.08), transparent 10%), linear-gradient(180deg,var(--bg), #071029);color:#fff}
+    .card{width:min(920px,94vw);padding:48px;border-radius:20px;background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.01));box-shadow:0 8px 30px rgba(2,6,23,0.6);text-align:center}
+    h1{font-size:clamp(28px,6vw,64px);margin:0 0 12px;letter-spacing:1px}
+    p.lead{margin:0 0 20px;font-size:18px;color:rgba(255,255,255,0.85)}
+    .badge{display:inline-block;padding:10px 18px;border-radius:999px;font-weight:700;background:linear-gradient(90deg,var(--accent),#ffb84d);color:#071029}
+    .small{font-size:13px;color:rgba(255,255,255,0.6);margin-top:12px}
+    .controls{margin-top:18px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+    .btn{padding:8px 14px;border-radius:8px;border:0;background:rgba(255,255,255,0.06);color:#fff;cursor:pointer}
+    input[type="text"]{padding:8px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.02);color:#fff}
+    footer{margin-top:18px;font-size:12px;color:rgba(255,255,255,0.45)}
+    /* confetti simple */
+    .confetti {position:absolute;inset:0;pointer-events:none;overflow:hidden}
+    .confetti i{position:absolute;width:8px;height:14px;transform:rotate(15deg);opacity:0.95;animation:fall linear infinite}
+    @keyframes fall{0%{transform:translateY(-10vh) rotate(0)}100%{transform:translateY(110vh) rotate(720deg)}}
+  </style>
+</head>
+<body>
+  <div class="confetti" aria-hidden="true"></div>
+
+  <div class="card" role="main">
+    <div class="badge" id="badgeText">CHAMPIONNE DÉPARTEMENTALE</div>
+    <h1 id="mainText">Zahia</h1>
+    <p class="lead" id="sub">a été élue champion·ne départemental·e — félicitations !</p>
+
+    <div class="controls" aria-hidden="false">
+      <input id="nameInput" type="text" placeholder="Écris un prénom..." />
+      <button class="btn" id="setBtn">Mettre à jour</button>
+      <button class="btn" id="resetBtn">Remettre par défaut</button>
+    </div>
+
+    <div class="small">Astuce : tu peux partager la page avec <code>?name=Prénom</code> à la fin de l'URL.</div>
+    <footer>Prank bon enfant — ne pas diffuser si ça pourrait blesser quelqu’un.</footer>
+  </div>
+
+  <script>
+    // Remplit depuis paramètre URL ?name=...
+    function getParam(n){const u=new URL(location.href);return u.searchParams.get(n)}
+    function setName(n){
+      const name = n || "Zahia";
+      document.getElementById('mainText').textContent = name;
+      document.title = name + " — Champion·ne départemental·e";
+    }
+
+    const param = getParam('name');
+    if(param) setName(param);
+
+    document.getElementById('setBtn').addEventListener('click', ()=>{
+      const v = document.getElementById('nameInput').value.trim();
+      if(v) {
+        setName(v);
+        // change URL without reload
+        const u = new URL(location.href);
+        u.searchParams.set('name', v);
+        history.replaceState({}, '', u.toString());
+      }
+    });
+    document.getElementById('resetBtn').addEventListener('click', ()=>{
+      history.replaceState({}, '', location.pathname);
+      setName('Zahia');
+      document.getElementById('nameInput').value = '';
+    });
+
+    // simple confetti generator
+    const confetti = document.querySelector('.confetti');
+    const colors = ['#ffd700','#ff6b6b','#6bffb3','#6bc1ff','#d66bff'];
+    for(let i=0;i<40;i++){
+      const el = document.createElement('i');
+      el.style.left = (Math.random()*100)+'%';
+      el.style.top = (-Math.random()*20-5)+'vh';
+      el.style.width = (6+Math.random()*8)+'px';
+      el.style.height = (10+Math.random()*12)+'px';
+      el.style.background = colors[Math.floor(Math.random()*colors.length)];
+      el.style.animationDuration = (3+Math.random()*5)+'s';
+      el.style.opacity = 0.9;
+      confetti.appendChild(el);
+    }
+  </script>
+</body>
+</html>
